@@ -27,7 +27,7 @@
              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
              :css-dirs ["public/css"]}
 
-  :cljsbuild {:test-commands {"test" ["lein" "doo" "phantom" "test" "once"]}
+  :cljsbuild {:test-commands {"test" ["lein" "doo" "phantom" "test" "auto"]}
               :builds {:app
                        {:source-paths ["src" "env/dev/cljs"]
                         :compiler

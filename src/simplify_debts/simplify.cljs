@@ -56,9 +56,10 @@
         weights-map (into (sorted-map) sorted-weights)
         nodes (keys sorted-weights)
         start-nodes (take (- (count nodes) 1) nodes)]
-    (reduce weight-to-edge
+    (->> start-nodes
+      (reduce weight-to-edge
             {:weights weights-map
              :rest-nodes (rest nodes)
              :edges []
-             :sorted-weights sorted-weights}
-            start-nodes)))
+             :sorted-weights sorted-weights})
+      :edges)))

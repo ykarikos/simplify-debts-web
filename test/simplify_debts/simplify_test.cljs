@@ -24,5 +24,5 @@
 (deftest simplify
   (let [simple-result (s/simplify simple-edges)
         zerosum-result (s/simplify zerosum-edges)]
-    (is (= (:edges simple-result) simple-expected))
-    (is (= (:edges zerosum-result) zerosum-expected))))
+    (is (= simple-result simple-expected))
+    (is (= zerosum-result zerosum-expected))))
