@@ -1,12 +1,5 @@
 (ns simplify-debts.simplify)
 
-; edge: {:from "Peter", :to "John", :amount 10}
-
-; edges
-; [{:from "Peter", :to "John", :amount 10}
-;  {:from "Fred", :to "John", :amount 20})
-;  {:from "John", :to "Michael", :amount 30}
-
 (defn- add-weight [weights edge]
   (let [from-key (keyword (:from edge))
         to-key (keyword (:to edge))
@@ -51,7 +44,12 @@
        (filter #(not= 0 (val %)))
        (sort #(compare (val %1) (val %2)))))
 
-(defn simplify [edges]
+(defn simplify
+  "Minify transactions to balance debts in given edges.
+  An example edge: {:from \"Peter\", :to \"John\", :amount 10}
+  Edges parameter is a vector of edges.
+  Return value has the same format."
+  [edges]
   (let [sorted-weights (edges-to-weights edges)
         weights-map (into (sorted-map) sorted-weights)
         nodes (keys sorted-weights)
