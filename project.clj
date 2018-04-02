@@ -6,10 +6,12 @@
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.238"]
-                 [reagent "0.7.0"]]
+                 [reagent "0.7.0"]
+                 [lein-doo "0.1.10"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
-            [lein-figwheel "0.5.15"]]
+            [lein-figwheel "0.5.15"]
+            [lein-doo "0.1.10"]]
 
   :min-lein-version "2.5.0"
 
@@ -25,7 +27,8 @@
              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
              :css-dirs ["public/css"]}
 
-  :cljsbuild {:builds {:app
+  :cljsbuild {:test-commands {"test" ["lein" "doo" "phantom" "test" "once"]}
+              :builds {:app
                        {:source-paths ["src" "env/dev/cljs"]
                         :compiler
                         {:main "simplify-debts.dev"
@@ -45,7 +48,12 @@
                          :output-dir "public/js/release"
                          :asset-path   "js/out"
                          :optimizations :advanced
-                         :pretty-print false}}}}
+                         :pretty-print false}}
+                       :test
+                        {:source-paths ["src" "test"]
+                         :compiler {:main runners.doo
+                                    :optimizations :none
+                                    :output-to "resources/public/cljs/tests/all-tests.js"}}}}
 
   :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
 
