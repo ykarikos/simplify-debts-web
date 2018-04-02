@@ -42,7 +42,7 @@
         {:weights (assoc weights target (+ (target weights) current-weight))
          :sorted-weights sorted-weights
          :rest-nodes (rest rest-nodes)
-         :edges (conj edges {:from node :to target :amount transact})}))))
+         :edges (conj edges {:from (name node) :to (name target) :amount transact})}))))
 
 
 (defn- edges-to-weights [edges]
