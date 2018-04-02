@@ -21,8 +21,29 @@
 
 (def zerosum-expected [])
 
+(def complex-edges
+  [{:from "*" :to "Sue" :amount 1200}
+   {:from "*" :to "Bob" :amount 5400}
+   {:from "Joe" :to "Bob" :amount 12}
+   {:from "Bob" :to "Sue" :amount 90}
+   {:from "Michael" :to "Sue" :amount 294}
+   {:from "Ellen" :to "Sue" :amount 24}
+   {:from "Michael" :to "*" :amount 3045}])
+
+(def complex-empty-nodes
+  ["Trevor"])
+
+(def complex-expected
+  [{:from "Michael" :to "Bob" :amount 3931.5}
+   {:from "Ellen" :to "Sue" :amount 616.5}
+   {:from "Joe" :to "Bob" :amount 604.5}
+   {:from "Trevor" :to "Sue" :amount 592.5}
+   {:from "Sue" :to "Bob" :amount 193.5}])
+
 (deftest simplify
-  (let [simple-result (s/simplify simple-edges)
-        zerosum-result (s/simplify zerosum-edges)]
+  (let [simple-result (s/simplify simple-edges [])
+        zerosum-result (s/simplify zerosum-edges [])
+        complex-result (s/simplify complex-edges complex-empty-nodes)]
     (is (= simple-result simple-expected))
-    (is (= zerosum-result zerosum-expected))))
+    (is (= zerosum-result zerosum-expected))
+    (is (= complex-result complex-expected))))

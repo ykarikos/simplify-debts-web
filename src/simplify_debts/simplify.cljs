@@ -1,4 +1,5 @@
-(ns simplify-debts.simplify)
+(ns simplify-debts.simplify
+  (:require [clojure.set :as set]))
 
 (defn- add-weight [weights edge]
   (let [from-key (keyword (:from edge))
@@ -37,6 +38,37 @@
          :rest-nodes (rest rest-nodes)
          :edges (conj edges {:from (name node) :to (name target) :amount transact})}))))
 
+(defn- split-from [unique-nodes]
+  (let [unique-count (count unique-nodes)]
+    (fn [edge]
+      (for [from unique-nodes :when (not= from (:to edge))]
+        {:from from
+         :to (:to edge)
+         :amount (/ (:amount edge) unique-count)}))))
+
+(defn- split-to [unique-nodes]
+  (let [unique-count (count unique-nodes)]
+    (fn [edge]
+      (for [to unique-nodes :when (not= to (:from edge))]
+        {:from (:from edge)
+         :to to
+         :amount (/ (:amount edge) unique-count)}))))
+
+(defn- starry-edge? [edge]
+  (or (= (:from edge) "*")
+      (= (:to edge) "*")))
+
+(defn- split-star-nodes [edges empty-nodes]
+  (let [from-nodes (->> edges (map :from) set)
+        to-nodes (->> edges (map :to) set)
+        unique-nodes (filter #(not= "*" %)
+                             (set/union from-nodes to-nodes (set empty-nodes)))
+        from-star (filter #(= (:from %) "*") edges)
+        split-from-edges (map (split-from unique-nodes) from-star)
+        to-star (filter #(= (:to %) "*") edges)
+        split-to-edges (map (split-to unique-nodes) to-star)
+        non-star-edges (filter #(not (starry-edge? %)) edges)]
+    (flatten (concat split-from-edges split-to-edges non-star-edges))))
 
 (defn- edges-to-weights [edges]
   (->> edges
@@ -48,9 +80,14 @@
   "Minify transactions to balance debts in given edges.
   An example edge: {:from \"Peter\", :to \"John\", :amount 10}
   Edges parameter is a vector of edges.
-  Return value has the same format."
-  [edges]
-  (let [sorted-weights (edges-to-weights edges)
+  Empty-nodes parameter is a list of node names that do not have
+  individual debts but will be taken into account in 'to-all' and
+  'from-all' debts that are marked with an asterisk, e.g. like this:
+  {:from \"Peter\", :to \"*\", :amount 100}
+  Return value has the same format as edges."
+  [edges empty-nodes]
+  (let [split-edges (split-star-nodes edges empty-nodes)
+        sorted-weights (edges-to-weights split-edges)
         weights-map (into (sorted-map) sorted-weights)
         nodes (keys sorted-weights)
         start-nodes (take (- (count nodes) 1) nodes)]
@@ -59,5 +96,5 @@
             {:weights weights-map
              :rest-nodes (rest nodes)
              :edges []
-             :sorted-weights sorted-weights})
-      :edges)))
+             :sorted-weights sorted-weights}))))
+;      :edges)))
