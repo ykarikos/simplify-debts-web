@@ -13,7 +13,7 @@
 
 (defn- find-greater-weight [weight weights]
   (->> weights
-      (filter #(> (second %) weight))
+      (filter #(> (val %) weight))
       first
       first))
 
@@ -32,7 +32,7 @@
         transact (Math/abs current-weight)]
     (if (= current-weight 0)
       result
-      (let [target (find-target current-weight sorted-weights rest-nodes)]
+      (let [target (find-target current-weight weights rest-nodes)]
         {:weights (assoc weights target (+ (target weights) current-weight))
          :sorted-weights sorted-weights
          :rest-nodes (rest rest-nodes)
@@ -96,5 +96,5 @@
             {:weights weights-map
              :rest-nodes (rest nodes)
              :edges []
-             :sorted-weights sorted-weights}))))
-;      :edges)))
+             :sorted-weights sorted-weights})
+      :edges)))
