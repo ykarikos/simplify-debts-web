@@ -35,10 +35,10 @@
 
 (def complex-expected
   [{:from "Michael" :to "Bob" :amount 3931.5}
-   {:from "Ellen" :to "Sue" :amount 616.5}
-   {:from "Joe" :to "Bob" :amount 604.5}
+   {:from "Ellen" :to "Bob" :amount 616.5}
+   {:from "Joe" :to "Sue" :amount 604.5}
    {:from "Trevor" :to "Sue" :amount 592.5}
-   {:from "Sue" :to "Bob" :amount 193.5}])
+   {:from "Sue" :to "Bob" :amount 181.5}])
 
 (deftest simplify
   (let [simple-result (s/simplify simple-edges [])
@@ -47,3 +47,28 @@
     (is (= simple-result simple-expected))
     (is (= zerosum-result zerosum-expected))
     (is (= complex-result complex-expected))))
+
+(defn- apply-result [weights edge]
+  (let [source (keyword (:from edge))
+        target (keyword (:to edge))
+        source-weight (source weights)
+        target-weight (target weights)
+        amount (:amount edge)]
+    (assoc weights
+           source (+ source-weight amount)
+           target (- target-weight amount))))
+
+(defn- get-zerosum [edges empty-nodes]
+  (let [split-edges (s/split-star-nodes edges empty-nodes)
+        sorted-weights (s/edges-to-weights split-edges)
+        weights-map (into (sorted-map) sorted-weights)
+        result (s/simplify edges empty-nodes)]
+    (->> result
+         (reduce apply-result weights-map)
+         (map val))))
+
+(deftest zerosum
+  (let [simple-sum (get-zerosum simple-edges [])
+        complex-sum (get-zerosum complex-edges complex-empty-nodes)]
+    (is (= complex-sum (repeat (count complex-sum) 0)))
+    (is (= simple-sum (repeat (count simple-sum) 0)))))
