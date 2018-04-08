@@ -78,6 +78,27 @@
    {:from "Michael" :to "Fred" :amount 5.0}
    {:from "Chris" :to "Peter" :amount 5.0}])
 
+(def star
+  [{:from "Peter" :to "John" :amount 10}
+   {:from "Fred" :to "John" :amount 20}
+   {:from "John" :to "Michael" :amount 30}
+   {:from "*" :to "Fred" :amount 60}])
+
+(def star-expected
+  [{:from "Peter" :to "Fred" :amount 25.0}
+   {:from "John" :to "Michael" :amount 15.0}])
+
+(def star2
+  [{:from "Peter" :to "John" :amount 10}
+   {:from "Fred" :to "John" :amount 20}
+   {:from "John" :to "Michael" :amount 30}
+   {:from "*" :to "Fred" :amount 60}
+   {:from "Fred" :to "*" :amount 60}])
+
+(def star2-expected
+  [{:from "Fred" :to "Michael" :amount 20.0}
+   {:from "Peter" :to "Michael" :amount 10.0}])
+
 ; Compare computed result to expected
 
 (deftest simplify
@@ -86,13 +107,17 @@
         complex-result (s/simplify complex-edges complex-empty-nodes)
         complex-result2 (s/simplify complex-edges2 complex-empty-nodes)
         star-and-empty-result (s/simplify star-and-empty star-and-empty-nodes)
-        big-result (s/simplify big-money [])]
+        big-result (s/simplify big-money [])
+        star-result (s/simplify star [])
+        star2-result (s/simplify star2 [])]
     (is (= simple-result simple-expected))
     (is (= zerosum-result zerosum-expected))
     (is (= complex-result complex-expected))
     (is (= complex-result2 complex-expected2))
     (is (= star-and-empty-result star-and-empty-expected))
-    (is (= big-result big-expected))))
+    (is (= big-result big-expected))
+    (is (= star-result star-expected))
+    (is (= star2-result star2-expected))))
 
 ; Apply result to initial weights and assert that they are zero
 
@@ -122,8 +147,12 @@
   (let [simple-sum (get-zerosum simple-edges [])
         complex-sum (get-zerosum complex-edges complex-empty-nodes)
         complex-sum2 (get-zerosum complex-edges2 complex-empty-nodes)
-        star-and-empty-sum (get-zerosum star-and-empty star-and-empty-nodes)]
+        star-and-empty-sum (get-zerosum star-and-empty star-and-empty-nodes)
+        star-sum (get-zerosum star [])
+        star2-sum (get-zerosum star2 [])]
     (is-zerosum simple-sum)
     (is-zerosum complex-sum)
     (is-zerosum complex-sum2)
-    (is-zerosum star-and-empty-sum)))
+    (is-zerosum star-and-empty-sum)
+    (is-zerosum star-sum)
+    (is-zerosum star2-sum)))
