@@ -75,8 +75,8 @@
 
 (def star-and-empty-expected
   [{:from "John" :to "Fred" :amount 20.0}
-   {:from "Chris" :to "Peter" :amount 5.0}
-   {:from "Michael" :to "Fred" :amount 5.0}])
+   {:from "Michael" :to "Fred" :amount 5.0}
+   {:from "Chris" :to "Peter" :amount 5.0}])
 
 ; Compare computed result to expected
 
@@ -115,12 +115,15 @@
          (reduce apply-result weights-map)
          (map val))))
 
+(defn- is-zerosum [sum]
+  (is (= sum (repeat (count sum) 0))))
+
 (deftest zerosum
   (let [simple-sum (get-zerosum simple-edges [])
         complex-sum (get-zerosum complex-edges complex-empty-nodes)
         complex-sum2 (get-zerosum complex-edges2 complex-empty-nodes)
         star-and-empty-sum (get-zerosum star-and-empty star-and-empty-nodes)]
-    (is (= simple-sum (repeat (count simple-sum) 0)))
-    (is (= complex-sum (repeat (count complex-sum) 0)))
-    (is (= complex-sum2 (repeat (count complex-sum2) 0)))
-    (is (= star-and-empty-sum (repeat (count star-and-empty-sum) 0)))))
+    (is-zerosum simple-sum)
+    (is-zerosum complex-sum)
+    (is-zerosum complex-sum2)
+    (is-zerosum star-and-empty-sum)))

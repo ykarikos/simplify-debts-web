@@ -13,7 +13,7 @@
 
 (defn- find-greater-weight [weight weights]
   (->> weights
-      (filter #(> (val %) weight))
+      (filter #(>= (val %) weight))
       first
       first))
 
