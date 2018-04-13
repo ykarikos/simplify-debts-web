@@ -23,9 +23,10 @@
                       :height "60px"}
               :on-change update-participants}])
 
-(defn- participant-dropdown [name]
+(defn- participant-dropdown [name key]
   [:td
    [:select
+    {:on-change}
     (for [p @participants]
       ^{:key p}
       [:option p
@@ -43,8 +44,8 @@
 
 (defn- row [id from to amount]
   [:tr
-   [participant-dropdown from]
-   [participant-dropdown to]
+   [participant-dropdown from :from]
+   [participant-dropdown to :to]
    [:td
     [:input (when (not (nil? amount)) {:value amount})]]
    [:td
@@ -56,6 +57,9 @@
     [:a {:href "#"
          :on-click (remove-row id)}
      "➖"]]])
+
+(defn- valid-input? []
+  (every? number? (map :amount @rows)))
 
 (defn home-page []
   [:div [:h2 "Simplify Debts"]
@@ -73,7 +77,9 @@
        ^{:key id} [row id from to amount])]]
    [:div [:input {:type "submit"
                   :value "show result"}]]
-   [:div ()]])
+   [:div (str @rows)]])
+   ; [:div (when (> (count @rows) 1)
+   ;         (s/simplify @rows []))]])
 
 ;; -------------------------
 ;; Initialize app

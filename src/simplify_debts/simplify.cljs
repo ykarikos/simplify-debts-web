@@ -78,12 +78,12 @@
 
 (defn simplify
   "Minify transactions to balance debts in given edges.
-  An example edge: {:from \"Peter\", :to \"John\", :amount 10}
+  An example edge: {:from \"Peter\" :to \"John\" :amount 10}
   Edges parameter is a vector of edges.
   Empty-nodes parameter is a list of node names that do not have
   individual debts but will be taken into account in 'to-all' and
   'from-all' debts that are marked with an asterisk, e.g. like this:
-  {:from \"Peter\", :to \"*\", :amount 100}
+  {:from \"Peter\" :to \"*\" :amount 100}
   Return value has the same format as edges."
   [edges empty-nodes]
   (let [split-edges (split-star-nodes edges empty-nodes)
