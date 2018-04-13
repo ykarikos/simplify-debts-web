@@ -32,3 +32,11 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+table td {
+  padding-right: 10px;
+}
+
+table input {
+  width: 80px;
+}
