@@ -10,8 +10,8 @@
 (defonce participants
   (r/atom []))
 
-(defonce row-count
-  (r/atom 1))
+(defonce rows
+  (r/atom [{:id 0}]))
 
 (defn update-participants [event]
   (let [value (.. event -target -value)
@@ -23,24 +23,38 @@
                       :height "60px"}
               :on-change update-participants}])
 
-(defn- participant-dropdown []
+(defn- participant-dropdown [name]
   [:td
    [:select
     (for [p @participants]
-      ^{:key p} [:option p])]])
+      ^{:key p}
+      [:option p
+       (when (= p name) {:selected true})])]])
 
-(defn- row [rownum]
+(defn- remove-row [id]
+  (fn [] (when (> (count @rows) 1))
+    (reset! rows
+            (->> @rows
+              (remove #(= id (:id %)))
+              vec))))
+
+(defn- max-row-id []
+  (apply max (map :id @rows)))
+
+(defn- row [id from to amount]
   [:tr
-   [participant-dropdown]
-   [participant-dropdown]
+   [participant-dropdown from]
+   [participant-dropdown to]
    [:td
-    [:input]]
+    [:input (when (not (nil? amount)) {:value amount})]]
+   [:td
+    (when (= id (max-row-id))
+      [:a {:href "#"
+           :on-click #(swap! rows conj {:id (inc id)})}
+       "➕"])]
    [:td
     [:a {:href "#"
-         :on-click #(swap! row-count inc)}
-     "➕"]
-    [:a {:href "#"
-         :on-click #(when (> @row-count 1) (swap! row-count dec))}
+         :on-click (remove-row id)}
      "➖"]]])
 
 (defn home-page []
@@ -55,11 +69,11 @@
       [:th "To"]
       [:th "Amount"]]]
     [:tbody
-     (for [r (range @row-count)]
-       ^{:key r} [row r])]]
+     (for [{:keys [id from to amount]} @rows]
+       ^{:key id} [row id from to amount])]]
    [:div [:input {:type "submit"
                   :value "show result"}]]
-   [:div ]])
+   [:div ()]])
 
 ;; -------------------------
 ;; Initialize app
