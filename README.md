@@ -11,7 +11,7 @@ lein figwheel
 ```
 
 Figwheel will automatically push cljs changes to the browser.
-Once Figwheel starts up, you should be able to open the `public/index.html` page in the browser.
+Once Figwheel starts up, you should be able to open the `docs/index.html` page in the browser.
 
 
 ## Building for production
