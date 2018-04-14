@@ -47,6 +47,7 @@
    [:select
     {:on-change (update-rows id key)}
     [:option]
+    [:option {:value "*"} "[Everyone]"]
     (for [p @participants]
       ^{:key p} [:option p])]])
 
@@ -107,7 +108,7 @@
    [:div {:style {:display (if @result-visible "block" "none")}}
      [:h2 "Result"]
      (if (valid-input? @rows)
-         (format-result (s/simplify @rows []))
+         (format-result (s/simplify @rows @participants))
          [:div "No valid input"])]])
 
 ;; -------------------------
