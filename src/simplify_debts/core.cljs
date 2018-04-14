@@ -13,6 +13,9 @@
 (defonce rows
   (r/atom [{:id 0}]))
 
+(defonce result-visible
+  (r/atom false))
+
 (defn update-participants [event]
   (let [value (.. event -target -value)
         participant-list (str/split value #"[,\s]+")]
@@ -74,7 +77,7 @@
      "➖"]]])
 
 (defn- valid-input? [rows]
-  (every? number? (map :amount rows)))
+  (every? #(and (number? %1) (pos? %1)) (map :amount rows)))
 
 (defn home-page []
   [:div [:h2 "Simplify Debts"]
@@ -90,10 +93,14 @@
     [:tbody
      (for [{:keys [id]} @rows]
        ^{:key id} [row id])]]
-   [:div [:input {:type "submit"
-                  :value "show result"}]]
-   [:div (str (when (valid-input? @rows)
-                (s/simplify @rows [])))]])
+   [:div [:input
+          {:type "submit"
+           :value (str (if @result-visible "hide" "show") " result")
+           :on-click #(swap! result-visible not)}]]
+   [:div {:style {:display (if @result-visible "block" "none")}}
+    (str (if (valid-input? @rows)
+           (s/simplify @rows [])
+           "No valid input"))]])
 
 ;; -------------------------
 ;; Initialize app
