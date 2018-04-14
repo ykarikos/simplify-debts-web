@@ -79,8 +79,15 @@
 (defn- valid-input? [rows]
   (every? #(and (number? %1) (pos? %1)) (map :amount rows)))
 
+(defn- format-result [result]
+  [:ul
+   (for [{:keys [from to amount]} result]
+     ^{:key (str from to amount)}
+     [:li (str from " pays " to ": " amount)])])
+
 (defn home-page []
-  [:div [:h2 "Simplify Debts"]
+  [:div
+   [:h1 "Simplify Debts"]
    [:div "Input people names (e.g. \"Bob, Mary, Alice\") "]
    [:div [participants-input]]
    [:div "Input the debts"]
@@ -98,9 +105,10 @@
            :value (str (if @result-visible "hide" "show") " result")
            :on-click #(swap! result-visible not)}]]
    [:div {:style {:display (if @result-visible "block" "none")}}
-    (str (if (valid-input? @rows)
-           (s/simplify @rows [])
-           "No valid input"))]])
+     [:h2 "Result"]
+     (if (valid-input? @rows)
+         (format-result (s/simplify @rows []))
+         [:div "No valid input"])]])
 
 ;; -------------------------
 ;; Initialize app
