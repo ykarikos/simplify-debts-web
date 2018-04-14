@@ -70,12 +70,14 @@
    [:td
     (when (> (count @rows) 1)
       [:a {:href "#"
-           :on-click (remove-row id)}
+           :on-click (remove-row id)
+           :title "Remove row"}
        "➖"])]
    [:td
     (when (= id (max-row-id))
       [:a {:href "#"
-           :on-click #(swap! rows conj {:id (inc id)})}
+           :on-click #(swap! rows conj {:id (inc id)})
+           :title "Add a new row"}
        "➕"])]])
 
 (defn- valid-input? [rows]
@@ -94,9 +96,13 @@
 (defn home-page []
   [:div
    [:h1 "Simplify Debts"]
-   [:div "Input people names (e.g. \"Bob, Mary, Alice\") "]
+   [:div
+    {:class "section"}
+    "1. Input people names (e.g. \"Bob, Mary, Alice\") "]
    [:div [participants-input]]
-   [:div "Input the debts"]
+   [:div
+    {:class "section"}
+    "2. Input the debts"]
    [:table
     [:thead
      [:tr
@@ -106,10 +112,12 @@
     [:tbody
      (for [{:keys [id]} @rows]
        ^{:key id} [row id])]]
-   [:div [:input
-          {:type "submit"
-           :value (str (if @result-visible "hide" "show") " result")
-           :on-click #(swap! result-visible not)}]]
+   [:div
+    {:class "section"}
+    [:input
+     {:type "submit"
+      :value (str (if @result-visible "Hide" "3. Show") " the result")
+      :on-click #(swap! result-visible not)}]]
    [:div {:style {:display (if @result-visible "block" "none")}}
      [:h2 "Result"]
      (if (valid-input? @rows)

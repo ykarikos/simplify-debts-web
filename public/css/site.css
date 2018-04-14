@@ -2,16 +2,25 @@ body {
   font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
   max-width: 600px;
   margin: 0 auto;
-  padding-top: 72px;
+  padding: 0;
   -webkit-font-smoothing: antialiased;
   font-size: 1.125em;
-  color: #333;
-  line-height: 1.5em;
+  color: #336;
 }
 
-h1, h2, h3 {
-  color: #000;
+#app {
+  background: #efe8e0;
+  padding: 0 1em 1em 1em;
+  border-radius: 10px;
+  border: 1px solid #aaa;
 }
+
+h1, h2 {
+  color: #622;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
 h1 {
   font-size: 2.5em
 }
@@ -20,23 +29,33 @@ h2 {
   font-size: 2em
 }
 
-h3 {
-  font-size: 1.5em
-}
-
 a {
   text-decoration: none;
-  color: #09f;
 }
 
-a:hover {
-  text-decoration: underline;
+.section {
+  margin-top: 1em;
+}
+
+textarea, table {
+  margin-top: 0.5em;
 }
 
 table td {
-  padding-right: 10px;
+  padding-right: 20px;
 }
 
 table input {
   width: 80px;
+}
+
+ul {
+  list-style: none;
+  padding-left: 1em;
+  margin: 0;
+}
+
+li:before {
+  content: "💰";
+  padding-right: 0.5em;
 }
