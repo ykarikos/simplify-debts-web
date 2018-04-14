@@ -68,14 +68,15 @@
    [:td
     [:input {:on-change (update-rows id :amount js/parseFloat)}]]
    [:td
+    (when (> (count @rows) 1)
+      [:a {:href "#"
+           :on-click (remove-row id)}
+       "➖"])]
+   [:td
     (when (= id (max-row-id))
       [:a {:href "#"
            :on-click #(swap! rows conj {:id (inc id)})}
-       "➕"])]
-   [:td
-    [:a {:href "#"
-         :on-click (remove-row id)}
-     "➖"]]])
+       "➕"])]])
 
 (defn- valid-input? [rows]
   (and
