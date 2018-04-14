@@ -23,14 +23,29 @@
                       :height "60px"}
               :on-change update-participants}])
 
-(defn- participant-dropdown [name key]
+(defn- get-row-updater [id key value]
+  (fn [row]
+    (if (= (:id row) id)
+      (assoc row key value)
+      row)))
+
+(defn- update-rows
+  ([id key] (update-rows id key identity))
+  ([id key filter]
+   (fn [event]
+     (let [value (.. event -target -value)
+           filtered-value (filter value)]
+       (swap! rows #(->> %
+                         (map (get-row-updater id key filtered-value))
+                         vec))))))
+
+(defn- participant-dropdown [id key]
   [:td
    [:select
-    {:on-change}
+    {:on-change (update-rows id key)}
+    [:option]
     (for [p @participants]
-      ^{:key p}
-      [:option p
-       (when (= p name) {:selected true})])]])
+      ^{:key p} [:option p])]])
 
 (defn- remove-row [id]
   (fn [] (when (> (count @rows) 1))
@@ -42,12 +57,12 @@
 (defn- max-row-id []
   (apply max (map :id @rows)))
 
-(defn- row [id from to amount]
+(defn- row [id]
   [:tr
-   [participant-dropdown from :from]
-   [participant-dropdown to :to]
+   [participant-dropdown id :from]
+   [participant-dropdown id :to]
    [:td
-    [:input (when (not (nil? amount)) {:value amount})]]
+    [:input {:on-change (update-rows id :amount js/parseFloat)}]]
    [:td
     (when (= id (max-row-id))
       [:a {:href "#"
@@ -58,8 +73,8 @@
          :on-click (remove-row id)}
      "➖"]]])
 
-(defn- valid-input? []
-  (every? number? (map :amount @rows)))
+(defn- valid-input? [rows]
+  (every? number? (map :amount rows)))
 
 (defn home-page []
   [:div [:h2 "Simplify Debts"]
@@ -73,13 +88,12 @@
       [:th "To"]
       [:th "Amount"]]]
     [:tbody
-     (for [{:keys [id from to amount]} @rows]
-       ^{:key id} [row id from to amount])]]
+     (for [{:keys [id]} @rows]
+       ^{:key id} [row id])]]
    [:div [:input {:type "submit"
                   :value "show result"}]]
-   [:div (str @rows)]])
-   ; [:div (when (> (count @rows) 1)
-   ;         (s/simplify @rows []))]])
+   [:div (str (when (valid-input? @rows)
+                (s/simplify @rows [])))]])
 
 ;; -------------------------
 ;; Initialize app
