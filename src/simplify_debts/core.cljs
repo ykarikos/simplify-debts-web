@@ -78,7 +78,11 @@
      "➖"]]])
 
 (defn- valid-input? [rows]
-  (every? #(and (number? %1) (pos? %1)) (map :amount rows)))
+  (and
+   (every? #(not (empty? %)) (map :from rows))
+   (every? #(not (empty? %)) (map :to rows))
+   (every? #(not= (:from %1) (:to %1)) rows)
+   (every? #(and (number? %1) (pos? %1)) (map :amount rows))))
 
 (defn- format-result [result]
   [:ul
