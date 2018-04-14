@@ -114,9 +114,10 @@
        ^{:key id} [row id])]]
    [:div
     {:class "section"}
+    "3. "
     [:input
      {:type "submit"
-      :value (str (if @result-visible "Hide" "3. Show") " the result")
+      :value (str (if @result-visible "Hide" "Show") " the result")
       :on-click #(swap! result-visible not)}]]
    [:div {:style {:display (if @result-visible "block" "none")}}
      [:h2 "Result"]
