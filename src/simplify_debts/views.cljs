@@ -97,7 +97,7 @@
   [:div
    [:div
     {:class "section"}
-    "1. Input people names (e.g. \"Bob, Mary, Alice\") "]
+    "1. Input the names (e.g. \"Bob, Mary, Alice\") "]
    [:div [participants-input]]
    [:div
     {:class "section"}
