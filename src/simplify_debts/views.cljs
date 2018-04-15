@@ -95,7 +95,6 @@
 
 (defn home-page []
   [:div
-   [:h1 "Simplify Debts"]
    [:div
     {:class "section"}
     "1. Input people names (e.g. \"Bob, Mary, Alice\") "]
