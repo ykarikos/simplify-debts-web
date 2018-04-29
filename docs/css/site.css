@@ -59,3 +59,9 @@ li:before {
   content: "💰";
   padding-right: 0.5em;
 }
+
+#cy {
+  border: 1px solid #333;
+  width: 300px;
+  height: 400px;
+}
