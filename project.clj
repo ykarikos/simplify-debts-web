@@ -1,8 +1,8 @@
-(defproject simplify-debts "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse docs License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+(defproject simplify-debts "1.0"
+  :description "Simplify debts by minimizing transactions"
+  :url "https://simplify-debts.peruna.fi/"
+  :license {:name "MIT"
+            :url "https://github.com/ykarikos/simplify-debts-web/blob/master/LICENSE"}
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.238"]
