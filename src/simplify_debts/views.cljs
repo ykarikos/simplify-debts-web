@@ -2,7 +2,8 @@
   (:require [reagent.core :as r]
             [clojure.string :as str]
             [simplify-debts.simplify :as s]
-            [goog.string.format]))
+            [goog.string.format]
+            [simplify-debts.graph :as graph]))
 
 (defonce participants
   (r/atom []))
@@ -84,14 +85,16 @@
    (every? #(not= (:from %1) (:to %1)) rows)
    (every? #(and (number? %1) (pos? %1)) (map :amount rows))))
 
-(defn- format-sum [s]
+(defn format-sum [s]
   (goog.string.format "%.2f" s))
 
 (defn- format-result [result]
-  [:ul
-   (for [{:keys [from to amount]} result]
-     ^{:key (str from to amount)}
-     [:li (str from " pays " to ": " (format-sum amount))])])
+  (doall
+    (graph/init result @participants)
+    [:ul
+     (for [{:keys [from to amount]} result]
+       ^{:key (str from to amount)}
+       [:li (str from " pays " to ": " (format-sum amount))])]))
 
 (defn home-page []
   [:div
