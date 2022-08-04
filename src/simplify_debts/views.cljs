@@ -2,13 +2,17 @@
   (:require [reagent.core :as r]
             [clojure.string :as str]
             [simplify-debts.simplify :as s]
-            [goog.string.format]))
+            [goog.string.format]
+            [alandipert.storage-atom :as storage-atom]))
 
 (defonce participants
-  (r/atom []))
+  (storage-atom/local-storage (r/atom []) :participants))
 
 (defonce rows
-  (r/atom [{:id 0}]))
+  (storage-atom/local-storage (r/atom [{:id 0}]) :rows))
+
+(defonce clear-text-inputs
+  (r/atom 0))
 
 (defonce result-visible
   (r/atom false))
@@ -21,7 +25,13 @@
 (defn- participants-input []
   [:textarea {:style {:width "300px"
                       :height "60px"}
+              :key @clear-text-inputs
+              :default-value @participants
               :on-change update-participants}])
+
+(defn- get-row-data [id key]
+  (when-let [row (first (filter #(= (:id %) id) @rows))]
+    (get row key)))
 
 (defn- get-row-updater [id key value]
   (fn [row]
@@ -42,7 +52,8 @@
 (defn- participant-dropdown [id key]
   [:td
    [:select
-    {:on-change (update-rows id key)}
+    {:default-value (get-row-data id key)
+     :on-change (update-rows id key)}
     [:option]
     [:option {:value "*"} "[Everyone]"]
     (for [p @participants]
@@ -63,7 +74,9 @@
    [participant-dropdown id :from]
    [participant-dropdown id :to]
    [:td
-    [:input {:on-change (update-rows id :amount js/parseFloat)}]]
+    [:input {:key @clear-text-inputs
+             :default-value (get-row-data id :amount)
+             :on-change (update-rows id :amount js/parseFloat)}]]
    [:td
     (when (> (count @rows) 1)
       [:a {:href "#"
@@ -92,6 +105,11 @@
    (for [{:keys [from to amount]} result]
      ^{:key (str from to amount)}
      [:li (str from " pays " to ": " (format-sum amount))])])
+
+(defn- reset-local-storage []
+  (reset! participants [])
+  (reset! rows [{:id 0}])
+  (swap! clear-text-inputs inc))
 
 (defn home-page []
   [:div
@@ -122,4 +140,11 @@
      [:h2 "Result"]
      (if (valid-input? @rows)
          (format-result (s/simplify @rows @participants))
-         [:div "No valid input"])]])
+         [:div "No valid input"])]
+   [:div
+    {:class "section"}
+    "4. "
+    [:input
+     {:type "submit"
+      :value "Reset!"
+      :on-click reset-local-storage}]]])
