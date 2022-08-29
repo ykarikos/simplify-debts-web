@@ -5,11 +5,15 @@
             [goog.string.format]
             [alandipert.storage-atom :as storage-atom]))
 
+(def ^:constant initial-participants [])
+
 (defonce participants
-  (storage-atom/local-storage (r/atom []) :participants))
+  (storage-atom/local-storage (r/atom initial-participants) :participants))
+
+(def ^:constant initial-rows [{:id 0}])
 
 (defonce rows
-  (storage-atom/local-storage (r/atom [{:id 0}]) :rows))
+  (storage-atom/local-storage (r/atom initial-rows) :rows))
 
 (defonce clear-text-inputs
   (r/atom 0))
@@ -107,8 +111,8 @@
      [:li (str from " pays " to ": " (format-sum amount))])])
 
 (defn- reset-local-storage []
-  (reset! participants [])
-  (reset! rows [{:id 0}])
+  (reset! participants initial-participants)
+  (reset! rows initial-rows)
   (swap! clear-text-inputs inc))
 
 (defn home-page []
