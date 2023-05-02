@@ -7,7 +7,12 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.238"]
                  [reagent "0.7.0"]
-                 [lein-doo "0.1.10"]]
+                 [lein-doo "0.1.10"]
+                 ;; OpenJDK11 seems to require jakarta.xml.bind-api
+                 ;; and jaxb-runtime as explicit requirements.
+                 [jakarta.xml.bind/jakarta.xml.bind-api "2.3.2"]
+                 [org.glassfish.jaxb/jaxb-runtime "2.3.2"]
+                 [alandipert/storage-atom "1.2.4"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-figwheel "0.5.15"]
